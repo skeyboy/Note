@@ -20,11 +20,10 @@ public class MainActivity extends Activity implements DefaultHardwareBackBtnHand
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mReactRootView = new ReactRootView(this);
-
         mReactInstanceManager = ReactInstanceManager.builder()
                 .setApplication(getApplication())
-                .setBundleAssetName("androidbundle.jsbundle")
-                .setJSMainModuleName("index.ios")
+                .setBundleAssetName("index.android.bundle")
+                .setJSMainModuleName("index.android")
                 .addPackage(new MainReactPackage())
                 .setUseDeveloperSupport(BuildConfig.DEBUG)
                 .setInitialLifecycleState(LifecycleState.RESUMED)
@@ -33,7 +32,7 @@ public class MainActivity extends Activity implements DefaultHardwareBackBtnHand
         mReactRootView.startReactApplication(mReactInstanceManager, "Note", null);
 
         setContentView(mReactRootView);
-    }
+      }
 
     @Override
     public boolean onKeyUp(int keyCode, KeyEvent event) {

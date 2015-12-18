@@ -12,8 +12,12 @@ var {
     StyleSheet,
     TabBarIOS,
     Text,
+    TextInput,
+    SliderIOS,
     NavigatorIOS,
+    SwitchIOS,
     View,
+    AlertIOS,
     } = React;
 
 var API_KEY = '7waqfqbprs7pajbz28mqf6vz';
@@ -23,12 +27,32 @@ var PARAMS = '?apikey=' + API_KEY + '&page_limit=' + PAGE_SIZE;
 var REQUEST_URL = API_URL + PARAMS;
 
 var First = require('./tab/First');
+var Third = require('./tab/third');
+
+var MyView = React.createClass({
+    render: function () {
+        return (
+            <View style={{  flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#F5FCFF',}}>
+
+                <SwitchIOS value={this.props.isOn}
+                           text='点击退回'
+                           onValueChange={ (value)=>{
+    this.props.navigator.pop();
+  }}/>
+            </View>
+        );
+    }
+});
 
 var Nav = React.createClass({
 
     getInitialState: function () {
         return {
-
+            nextPage: false,
             selectedTab: 'first',
             notifCount: 0,
             presses: 0,
@@ -38,11 +62,17 @@ var Nav = React.createClass({
             }),
             loaded: false,
             badge: null,
+            searchText: '',
+
         };
     },
+    componentWillMount: function () {
 
+
+    },
     componentDidMount: function () {
         this.fetchData();
+
     },
 
     fetchData: function () {
@@ -58,6 +88,13 @@ var Nav = React.createClass({
     },
 
     render: function () {
+
+        var property = this.props.property;
+        if (!property) {
+            property = {property: {isOn: true, isFirst: true}}
+        } else {
+        }
+        //this.setState({nextPage:property.isOn});
         if (!this.state.loaded) {
             return this.renderLoadingView();
         }
@@ -75,9 +112,25 @@ var Nav = React.createClass({
               selectedTab: 'first',
             });
           }}>
-                    <First bgColor={'red'} hint={'Hello,This is the first Page.'+'\n'+' And also is the default '}>
+                    <View>
+                        <First >
+                            <SliderIOS />
+                            <SwitchIOS onValueChange={(value)=> { this.setState({nextPage:value});
+property.isFirst = false;
+                    if (value) {
+                      this.props.navigator.push( {
+                  component:MyView,
+                  title: '主页',
+                  passProps: {property:{isOn:value,isFirst:false}},
+                } ) ;
+                    }else {
+                      //this.props.navigator.pop();
+                    }
+                    }}
 
-                    </First>
+                                       value={ !property.isFirst ? property.isOn : this.state.nextPage}/>
+                        </First>
+                    </View>
 
                 </TabBarIOS.Item>
 
@@ -99,7 +152,13 @@ badge:this.state.badge+1
                         style={styles.listView}
                         />
                 </TabBarIOS.Item>
-
+                <TabBarIOS.Item
+                    title="Third"
+                    selected={this.state.selectedTab === 'third'}
+                    onPress={()=> this.setState({selectedTab:'third'})}
+                    >
+                    <Third />
+                </TabBarIOS.Item>
             </TabBarIOS>
         );
     },
